@@ -1,16 +1,18 @@
 class Field
+  MAX_INDEX = 6
+  MAX_SIZE = 7
 
   FIXED_PIECES = [
-    [:blue, nil, :helmet, nil, :candelabra, nil, :green],
+    [CurvePiece.new('se', :blue), nil, CrossingPiece.new('wse', :helmet), nil, CrossingPiece.new('wse', :candelabra), nil, CurvePiece.new('sw', :green)],
     [nil, nil, nil, nil, nil, nil, nil],
-    [:sword, nil, :emerald, nil, :treasure_chest, nil, :ring],
+    [CrossingPiece.new('nes', :sword), nil, CrossingPiece.new('nes', :emerald), nil, CrossingPiece.new('esw', :treasure_chest), nil, CrossingPiece.new('nsw', :ring)],
     [nil, nil, nil, nil, nil, nil, nil],
-    [:skull, nil, :keys, nil, :crown, nil, :map],
+    [CrossingPiece.new('nes', :skull), nil, CrossingPiece.new('ewn', :keys), nil, CrossingPiece.new('nws', :crown), nil, CrossingPiece.new('nws', :map)],
     [nil, nil, nil, nil, nil, nil, nil],
-    [:yellow, nil, :money_bag, nil, :book, nil, :red]
+    [CurvePiece.new('ne', :yellow), nil, CrossingPiece.new('ewn', :money_bag), nil, CrossingPiece.new('ewn', :book), nil, CurvePiece.new('nw', :red)]
   ]
 
-  FREE_PIECES = ([:straight] * 13) + ([:corner] * 9) + [:mouse, :bat, :salamander, :dragon, :witch, :spider, :owl, :gini, :ghost, :scarab, :leprechaun, :moth]
+  FREE_PIECES = (1..13).map { StraightPiece.new } + (1..9).map { CurvePiece.new } + [CurvePiece.new(nil, :mouse), CurvePiece.new(nil, :salamander), CurvePiece.new(nil, :spider), CurvePiece.new(nil, :scarab), CurvePiece.new(nil, :moth), CurvePiece.new(nil, :owl)] + [CrossingPiece.new(nil, :bat), CrossingPiece.new(nil, :dragon), CrossingPiece.new(nil, :witch), CrossingPiece.new(nil, :gini), CrossingPiece.new(nil, :ghost), CrossingPiece.new(nil, :leprechaun)]
 
   PUSHABLES = {
     north_left: { x: 1, y: 0, opposite_of: :south_left },
@@ -61,7 +63,7 @@ class Field
   def push_down(x)
     moving_piece = @piece_in_play
     replacing_piece = nil
-    7.times do |i|
+    MAX_SIZE.times do |i|
       replacing_piece = moving_piece
       moving_piece = @board[i][x]
       @board[i][x] = replacing_piece
@@ -77,8 +79,8 @@ class Field
   def push_up(x)
     moving_piece = @piece_in_play
     replacing_piece = nil
-    7.times do |i|
-      reverse_i = 6 - i
+    MAX_SIZE.times do |i|
+      reverse_i = MAX_INDEX - i
       replacing_piece = moving_piece
       moving_piece = @board[reverse_i][x]
       @board[reverse_i][x] = replacing_piece
