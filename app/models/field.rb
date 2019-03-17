@@ -59,6 +59,15 @@ class Field
     @last_push = push_id
   end
 
+  def render
+    puts '-' * 50
+    @board.each do |row_of_pieces|
+      row_of_tiles = row_of_pieces.map(&:render_tile)
+      (0..2).map { |i| puts '|' + row_of_tiles.map { |tile| tile[i] + ['|'] }.join }
+      puts '-' * 50
+    end
+  end
+
   private
 
   def push_down(x)
