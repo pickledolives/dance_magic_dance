@@ -6,12 +6,12 @@ class Piece
     ['##', '##', '##'].freeze
   ].freeze
 
-  attr_reader :passages, :card_symbol
+  attr_reader :passages, :card
 
-  def initialize(passages = nil, card_symbol = nil)
+  def initialize(passages = nil, card = nil)
     passages = parse_passages(passages) if passages.is_a?(String)
     @passages = passages || random_passages
-    @card_symbol = card_symbol
+    @card = card
   end
 
   def passages=(passages)
@@ -26,13 +26,13 @@ class Piece
 
   def to_s
     s = name
-    s << " with '#{@card_symbol}'" unless @card_symbol.nil?
+    s << " with '#{@card.name}'" unless @card.nil?
     s << " open at: #{@passages.join(', ')}"
   end
 
   def render_tile
     tile = BASE_TILE.map(&:dup)
-    tile[1][1] = 'KK' unless @card_symbol.nil?
+    tile[1][1] = @card.image unless @card.nil?
     tile[0][1] = '  ' if @passages.include?(:north)
     tile[1][2] = '  ' if @passages.include?(:east)
     tile[2][1] = '  ' if @passages.include?(:south)

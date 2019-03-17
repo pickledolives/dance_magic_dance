@@ -2,17 +2,50 @@ class Field
   MAX_INDEX = 6
   MAX_SIZE = 7
 
+  STARTS = {
+    blue: Card.new('blue', 'bl'),
+    green: Card.new('green', 'gr'),
+    red: Card.new('red', 're'),
+    yellow: Card.new('yellow', 'ye')
+  }
+  CARDS = {
+    helmet: Card.new('helmet', 'he'),
+    candelabra: Card.new('candelabra', 'ca'),
+    sword: Card.new('sword', 'sw'),
+    emerald: Card.new('emerald', 'em'),
+    treasure: Card.new('treasure chest', 'tc'),
+    ring: Card.new('ring', 'ri'),
+    skull: Card.new('skull', 'sk'),
+    keys: Card.new('keys', 'kk'),
+    crown: Card.new('crown', 'cr'),
+    map: Card.new('map', 'ma'),
+    money_bag: Card.new('money bag', 'mb'),
+    book: Card.new('book', 'bo'),
+    mouse: Card.new('mouse', 'ms'),
+    salamander: Card.new('salamander', 'sa'),
+    spider: Card.new('spider', 'sp'),
+    scarab: Card.new('scarab', 'sc'),
+    moth: Card.new('moth', 'mt'),
+    owl: Card.new('owl', 'ow'),
+    bat: Card.new('bat', 'ba'),
+    dragon: Card.new('dragon', 'dr'),
+    witch: Card.new('witch', 'wi'),
+    gini: Card.new('gini', 'gi'),
+    ghost: Card.new('ghost', 'gh'),
+    leprechaun: Card.new('leprechaun', 'le')
+  }
+
   FIXED_PIECES = [
-    [CurvePiece.new('se', :blue), nil, CrossingPiece.new('wse', :helmet), nil, CrossingPiece.new('wse', :candelabra), nil, CurvePiece.new('sw', :green)],
+    [CurvePiece.new('se', STARTS[:blue]), nil, CrossingPiece.new('wse', CARDS[:helmet]), nil, CrossingPiece.new('wse', CARDS[:candelabra]), nil, CurvePiece.new('sw', STARTS[:green])],
     [nil, nil, nil, nil, nil, nil, nil],
-    [CrossingPiece.new('nes', :sword), nil, CrossingPiece.new('nes', :emerald), nil, CrossingPiece.new('esw', :treasure_chest), nil, CrossingPiece.new('nsw', :ring)],
+    [CrossingPiece.new('nes', CARDS[:sword]), nil, CrossingPiece.new('nes', CARDS[:emerald]), nil, CrossingPiece.new('esw', CARDS[:treasure]), nil, CrossingPiece.new('nsw', CARDS[:ring])],
     [nil, nil, nil, nil, nil, nil, nil],
-    [CrossingPiece.new('nes', :skull), nil, CrossingPiece.new('ewn', :keys), nil, CrossingPiece.new('nws', :crown), nil, CrossingPiece.new('nws', :map)],
+    [CrossingPiece.new('nes', CARDS[:skull]), nil, CrossingPiece.new('ewn', CARDS[:keys]), nil, CrossingPiece.new('nws', CARDS[:crown]), nil, CrossingPiece.new('nws', CARDS[:map])],
     [nil, nil, nil, nil, nil, nil, nil],
-    [CurvePiece.new('ne', :yellow), nil, CrossingPiece.new('ewn', :money_bag), nil, CrossingPiece.new('ewn', :book), nil, CurvePiece.new('nw', :red)]
+    [CurvePiece.new('ne', STARTS[:yellow]), nil, CrossingPiece.new('ewn', CARDS[:money_bag]), nil, CrossingPiece.new('ewn', CARDS[:book]), nil, CurvePiece.new('nw', STARTS[:red])]
   ]
 
-  FREE_PIECES = (1..13).map { StraightPiece.new } + (1..9).map { CurvePiece.new } + [CurvePiece.new(nil, :mouse), CurvePiece.new(nil, :salamander), CurvePiece.new(nil, :spider), CurvePiece.new(nil, :scarab), CurvePiece.new(nil, :moth), CurvePiece.new(nil, :owl)] + [CrossingPiece.new(nil, :bat), CrossingPiece.new(nil, :dragon), CrossingPiece.new(nil, :witch), CrossingPiece.new(nil, :gini), CrossingPiece.new(nil, :ghost), CrossingPiece.new(nil, :leprechaun)]
+  FREE_PIECES = (1..13).map { StraightPiece.new } + (1..9).map { CurvePiece.new } + [CurvePiece.new(nil, CARDS[:mouse]), CurvePiece.new(nil, CARDS[:salamander]), CurvePiece.new(nil, CARDS[:spider]), CurvePiece.new(nil, CARDS[:scarab]), CurvePiece.new(nil, CARDS[:moth]), CurvePiece.new(nil, CARDS[:owl])] + [CrossingPiece.new(nil, CARDS[:bat]), CrossingPiece.new(nil, CARDS[:dragon]), CrossingPiece.new(nil, CARDS[:witch]), CrossingPiece.new(nil, CARDS[:gini]), CrossingPiece.new(nil, CARDS[:ghost]), CrossingPiece.new(nil, CARDS[:leprechaun])]
 
   PUSHABLES = {
     north_left: { x: 1, y: 0, opposite_of: :south_left },
@@ -29,9 +62,16 @@ class Field
     west_bottom: { x: 0, y: 5, opposite_of: :east_bottom }
   }
 
-  attr_reader :board, :piece_in_play
+  attr_reader :board, :piece_in_play, :player_cards
 
-  def initialize
+  def initialize(player_count)
+    cards_per_player = CARDS.size / player_count
+    cards_stack = CARDS.values.shuffle
+    players = STARTS.first(player_count).to_h
+    @player_cards = players.map do |color, start_card|
+      [color, [start_card] + cards_stack.shift(cards_per_player)]
+    end.to_h
+
     pieces_stack = FREE_PIECES.dup.shuffle
     @board = FIXED_PIECES.map do |row|
       row.map do |piece|

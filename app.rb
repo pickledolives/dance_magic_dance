@@ -1,20 +1,41 @@
+load './app/models/card.rb'
 load './app/models/piece.rb'
 load './app/models/curve_piece.rb'
 load './app/models/straight_piece.rb'
 load './app/models/crossing_piece.rb'
 load './app/models/field.rb'
 
-field = Field.new
+field = Field.new(2)
+
+pp '--- players and cards'
+pp field.player_cards
+
+player = :green
+card = field.player_cards[player].last
 
 pp '--- board'
-pp field.board.map { |row| row.map(&:to_s) }
+field.render
 pp '---'
+pp "Player: '#{player}' with target '#{card.image}', the #{card.name}"
+pp "Piece in play: #{field.piece_in_play}"
+field.push_at(:east, :center)
+
+player = :blue
+card = field.player_cards[player].last
+
+pp '--- board'
+field.render
+pp '---'
+pp "Player: '#{player}' with target '#{card.image}', the #{card.name}"
 pp "Piece in play: #{field.piece_in_play}"
 
 field.push_at(:east, :center)
 
-pp '--- board'
-pp field.board.map { |row| row.map(&:to_s) }
-pp '---'
-pp "Piece in play: #{field.piece_in_play}"
+player = :green
+card = field.player_cards[player].last
 
+pp '--- board'
+field.render
+pp '---'
+pp "Player: '#{player}' with target '#{card.image}', the #{card.name}"
+pp "Piece in play: #{field.piece_in_play}"
