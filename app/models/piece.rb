@@ -15,6 +15,14 @@ class Piece
     @players = players
   end
 
+  def remove_player(player)
+    @players -= [player]
+  end
+
+  def add_player(player)
+    @players += [player]
+  end
+
   def passages=(passages)
     passages = parse_passages(passages) if passages.is_a?(String)
     raise 'invalid piece orientation' unless types.include?(passages.sort) 

@@ -2,11 +2,30 @@ class Field
   MAX_INDEX = 6
   MAX_SIZE = 7
 
+  OPPOSITE_DIRECTIONS = {
+    north: :south,
+    east: :west,
+    south: :north,
+    west: :east
+  }
+  DIRECTION_ABBREVS = {
+    'n' => :north,
+    'e' => :east,
+    's' => :south,
+    'w' => :west
+  }
+  SLOT_ABBREVS = {
+    't' => :top,
+    'c' => :center,
+    'b' => :bottom,
+    'l' => :left,
+    'r' => :right
+  }
 
   PLAYERS = {
     blue: Player.new(:blue, 'B', 0, 0),
-    green: Player.new(:green, 'G', 0, 6),
-    red: Player.new(:red, 'R', 6, 0),
+    green: Player.new(:green, 'G', 6, 0),
+    red: Player.new(:red, 'R', 0, 6),
     yellow: Player.new(:yellow, 'Y', 6, 6)
   }
   STARTS = {
@@ -69,7 +88,7 @@ class Field
     west_bottom: { x: 0, y: 5, opposite_of: :east_bottom }
   }
 
-  attr_reader :board, :piece_in_play, :players
+  attr_reader :board, :piece_in_play, :players, :last_push_at
 
   def initialize(player_count)
     cards_per_player = CARDS.size / player_count
@@ -78,8 +97,8 @@ class Field
     @players = player_starts.map do |color, start_card|
       player = PLAYERS[color]
       cards = [start_card] + cards_stack.shift(cards_per_player)
-      piece = FIXED_PIECES[player.x][player.y]
-      [color, { player: player, cards: cards, piece: piece }]
+      piece = FIXED_PIECES[player.y][player.x]
+      [color, { player: player, cards: cards, piece: piece, completed_cards: [], last_move: nil }]
     end.to_h
 
     pieces_stack = FREE_PIECES.dup.shuffle
@@ -93,20 +112,52 @@ class Field
     raise "there are pieces left!" unless pieces_stack.empty?
   end
 
-  def push_at(direction, position, passages = nil)
+  def move(player_name, path)
+    player_state = @players[player_name]
+    player = player_state[:player]
+    path = parse_path(path) if path.is_a?(String)
+    player_state[:last_move] = path
+    path.each do |direction|
+      current_piece = player_state[:piece]
+      neighbor_x, neighbor_y = neighbor_coords(player.x, player.y, direction) 
+      neighbor_piece = @board[neighbor_y][neighbor_x]
+      raise "there is a wall in the way!" unless current_piece.passages.include?(direction) && neighbor_piece.passages.include?(OPPOSITE_DIRECTIONS[direction])
+      player.x = neighbor_x
+      player.y = neighbor_y
+      player_state[:piece] = neighbor_piece
+      current_piece.remove_player(player)
+      neighbor_piece.add_player(player)
+    end
+    if player_state[:piece].card == player_state[:cards].last
+      player_state[:completed_cards].push(player_state[:cards].pop)
+      pp "SUCCESS!!! Player '#{player_name}' conquered the '#{player_state[:completed_cards].last.name}'"
+    end
+  rescue StandardError => e
+    pp "Move could not finish! #{e.message}"
+  end
+
+  def push_at(push_abbrev, passages = nil)
+    direction, position = parse_push(push_abbrev)
     push_id = "#{direction}_#{position}".to_sym
     push = PUSHABLES[push_id]
-    raise "cannot push there" if push.nil?
-    raise "cannot reverse push" if push[:opposite_of] == @last_push
+    raise "Cannot push there" if push.nil?
+    raise "Cannot reverse push from last round" if push[:opposite_of] == @last_push
 
     passages.nil? ? @piece_in_play.random_passages : @piece_in_play.passages = passages
-    case direction.to_sym
-    when :north then push_down(push[:x])
-    when :east then push_left(push[:y])
-    when :south then push_up(push[:x])
-    when :west then push_right(push[:y])
+    opposite_piece = @piece_in_play
+    @piece_in_play =
+      case direction.to_sym
+      when :north then push_down(push[:x])
+      when :east then push_left(push[:y])
+      when :south then push_up(push[:x])
+      when :west then push_right(push[:y])
+      end
+
+    @piece_in_play.players.each do |player|
+      @piece_in_play.remove_player(player)
+      opposite_piece.add_player(player)
     end
-    @last_push = push_id
+    @last_push_at = push_id
   end
 
   def render
@@ -120,6 +171,32 @@ class Field
 
   private
 
+  def neighbor_coords(x, y, direction)
+    neighbor_x = x.dup
+    neighbor_y = y.dup
+    case direction
+    when :north then neighbor_y = y - 1
+    when :east then neighbor_x = x + 1
+    when :south then neighbor_y = y + 1
+    when :west then neighbor_x = x - 1
+    end
+    raise "Move is outside the board" if neighbor_y < 0 || neighbor_x < 0 || neighbor_x > 6 || neighbor_y > 6 
+    return neighbor_x, neighbor_y
+  end
+
+  def parse_push(push_abbrev)
+    letters = push_abbrev.split('')
+    direction = DIRECTION_ABBREVS[letters[0]] || raise('Path contains an invalid direction letter!')
+    slot = SLOT_ABBREVS[letters[1]] || raise('Slot contains an invalid slot letter!')
+    return direction, slot
+  end
+
+  def parse_path(path_abbrev)
+    path_abbrev.split('').map do |letter|
+      DIRECTION_ABBREVS[letter] || raise('Path contains an invalid direction letter!')
+    end
+  end
+
   def push_down(x)
     moving_piece = @piece_in_play
     replacing_piece = nil
@@ -128,12 +205,12 @@ class Field
       moving_piece = @board[i][x]
       @board[i][x] = replacing_piece
     end
-    @piece_in_play = moving_piece
+    moving_piece
   end
 
   def push_left(y)
     @board[y].push(@piece_in_play)
-    @piece_in_play = @board[y].shift
+    @board[y].shift
   end
 
   def push_up(x)
@@ -145,11 +222,11 @@ class Field
       moving_piece = @board[reverse_i][x]
       @board[reverse_i][x] = replacing_piece
     end
-    @piece_in_play = moving_piece
+    moving_piece
   end
 
   def push_right(y)
     @board[y].unshift(@piece_in_play)
-    @piece_in_play = @board[y].pop
+    @board[y].pop
   end
 end
