@@ -6,12 +6,13 @@ class Piece
     ['##', '##', '##'].freeze
   ].freeze
 
-  attr_reader :passages, :card
+  attr_reader :passages, :card, :players
 
-  def initialize(passages = nil, card = nil)
+  def initialize(passages = nil, card = nil, players = [])
     passages = parse_passages(passages) if passages.is_a?(String)
     @passages = passages || random_passages
     @card = card
+    @players = players
   end
 
   def passages=(passages)
@@ -31,12 +32,17 @@ class Piece
   end
 
   def render_tile
+    player_names = @players.map(&:name)
     tile = BASE_TILE.map(&:dup)
     tile[1][1] = @card.image unless @card.nil?
     tile[0][1] = '  ' if @passages.include?(:north)
     tile[1][2] = '  ' if @passages.include?(:east)
     tile[2][1] = '  ' if @passages.include?(:south)
     tile[1][0] = '  ' if @passages.include?(:west)
+    tile[0][0] = 'BB' if player_names.include?(:blue)
+    tile[0][2] = 'GG' if player_names.include?(:green)
+    tile[2][0] = 'YY' if player_names.include?(:yellow)
+    tile[2][2] = 'RR' if player_names.include?(:red)
     tile
   end
 

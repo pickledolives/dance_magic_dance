@@ -1,3 +1,4 @@
+load './app/models/player.rb'
 load './app/models/card.rb'
 load './app/models/piece.rb'
 load './app/models/curve_piece.rb'
@@ -8,10 +9,10 @@ load './app/models/field.rb'
 field = Field.new(2)
 
 pp '--- players and cards'
-pp field.player_cards
+pp field.players
 
 player = :green
-card = field.player_cards[player].last
+card = field.players[player][:cards].last
 
 pp '--- board'
 field.render
@@ -21,7 +22,7 @@ pp "Piece in play: #{field.piece_in_play}"
 field.push_at(:east, :center)
 
 player = :blue
-card = field.player_cards[player].last
+card = field.players[player][:cards].last
 
 pp '--- board'
 field.render
@@ -32,7 +33,7 @@ pp "Piece in play: #{field.piece_in_play}"
 field.push_at(:east, :center)
 
 player = :green
-card = field.player_cards[player].last
+card = field.players[player][:cards].last
 
 pp '--- board'
 field.render
