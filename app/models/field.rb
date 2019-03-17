@@ -43,12 +43,13 @@ class Field
     raise "there are pieces left!" unless pieces_stack.empty?
   end
 
-  def push_at(direction, position)
+  def push_at(direction, position, passages = nil)
     push_id = "#{direction}_#{position}".to_sym
     push = PUSHABLES[push_id]
     raise "cannot push there" if push.nil?
     raise "cannot reverse push" if push[:opposite_of] == @last_push
 
+    passages.nil? ? @piece_in_play.random_passages : @piece_in_play.passages = passages
     case direction.to_sym
     when :north then push_down(push[:x])
     when :east then push_left(push[:y])

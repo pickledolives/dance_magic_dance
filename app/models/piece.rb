@@ -1,7 +1,5 @@
 class Piece
 
-  PASSAGE_TYPES = %i(north east south west)
-
   attr_reader :passages, :card_symbol
 
   def initialize(passages = nil, card_symbol = nil)
