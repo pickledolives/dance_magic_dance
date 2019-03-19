@@ -9,7 +9,10 @@ load './app/models/curve_piece.rb'
 load './app/models/straight_piece.rb'
 load './app/models/crossing_piece.rb'
 load './app/models/game.rb'
+load './app/views/cli/make_piece_tile.rb'
 load './app/views/cli/render_piece_tile.rb'
+load './app/views/cli/render_card.rb'
+load './app/views/cli/render_piece_tile_and_card.rb'
 load './app/views/cli/render_board.rb'
 
 QUITS = %w(q quit exit)
@@ -67,8 +70,9 @@ while game.winner.nil?
   puts '--- board'
   RenderBoard.call(game.board)
   puts '---'
-  puts "Piece in play: #{game.piece_in_play}"
   puts "Player '#{game.current_player_name}'s current card is #{game.current_player.current_card}"
+  puts "Piece in play: #{game.piece_in_play}"
+  RenderPieceTileAndCard.call(game.piece_in_play, game.current_player.current_card)
   retry_input_until_valid do
     puts "Where to push and how to insert piece? (i.e.: 'ec ns')"
     push_input = gets.strip
