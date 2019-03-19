@@ -19,6 +19,7 @@ TO DO:
 - display current piece-in-hand and card
 - test suite
 - save and load game state
+- display last players path on board
 
 ## Run
 
