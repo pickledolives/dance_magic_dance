@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CrossingPiece < Piece
   TYPES = [
     %i(east north south),
@@ -7,7 +9,7 @@ class CrossingPiece < Piece
   ]
 
   def name
-    'crossing'
+    :crossing
   end
 
   def types

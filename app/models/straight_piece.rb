@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class StraightPiece < Piece
   TYPES = [
     %i(north south),
@@ -5,7 +7,7 @@ class StraightPiece < Piece
   ]
 
   def name
-    'straight'
+    :straight
   end
 
   def types

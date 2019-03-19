@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CurvePiece < Piece
   TYPES = [
     %i(east north),
@@ -7,7 +9,7 @@ class CurvePiece < Piece
   ]
 
   def name
-    'curve'
+    :curve
   end
 
   def types
