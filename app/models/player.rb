@@ -1,4 +1,4 @@
-  # frozen_string_literal: true
+# frozen_string_literal: true
 
 class Player
   attr_reader :name, :image, :cards, :completed_cards
@@ -14,7 +14,7 @@ class Player
     @piece = Game::FIXED_PIECES[@name]
     @piece.add_player(self)
     @completed_cards = []
-    @last_move = nil
+    @last_move = []
   end
 
   def won?

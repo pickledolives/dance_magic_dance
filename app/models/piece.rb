@@ -20,7 +20,7 @@ class Piece
 
   def passages=(passages)
     raise 'Invalid piece orientation' unless types.include?(passages.sort)
-    @passages = passages
+    @passages = passages.sort
   end
 
   def random_passages!
