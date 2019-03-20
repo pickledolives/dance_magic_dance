@@ -13,10 +13,10 @@ We will publish a blog series about our experiences coding this game.
 - accepts user input via CLI
 - working unlimited moves and WIN game when card stack is empty => FULL GAME!
 - code refactored
-
-TO DO:
 - board surrounding graphics: directions, slots
 - display current piece-in-hand and card
+
+TO DO:
 - test suite
 - save and load game state
 - display last players path on board
