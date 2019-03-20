@@ -3,12 +3,13 @@
 module RenderPieceTileAndCard
 
   MARGIN = 10
+  ROWS_PER_TILE = 3
 
   def self.call(piece, card)
     tile = MakePieceTile.call(piece)
     puts "    n     #{margin}#{'-' * 8}"
     puts " #{'-' * 8} #{margin}|      |"
-    3.times do |i|
+    ROWS_PER_TILE.times do |i|
       if i == 1
         puts "w|#{tile[i].join}|e#{margin}|  #{card.image}  |"
       else
