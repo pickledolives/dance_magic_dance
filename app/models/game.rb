@@ -118,6 +118,10 @@ class Game
     @last_push = nil
   end
 
+  def last_player
+    @players[@players_order[(@round - 1) % @players.size]]
+  end
+
   def next_player!
     @round += 1
     @current_player_name = @players_order[@round % @players.size]
@@ -129,6 +133,7 @@ class Game
 
   def move_player!(path)
     current_player.last_move = path
+    current_player.last_move_trace = [current_player.piece]
     path.each do |direction|
       current_piece = current_player.piece
       x, y = locate_piece(current_piece)
@@ -139,6 +144,7 @@ class Game
       current_piece.remove_player(current_player)
       neighbor_piece.add_player(current_player)
       current_player.piece = neighbor_piece
+      current_player.last_move_trace << current_player.piece
     end
     if current_player.reached_current_card?
       puts "SUCCESS! Player '#{@current_player_name}' conquered the '#{current_player.current_card.name}'."

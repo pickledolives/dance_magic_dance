@@ -10,10 +10,15 @@ module MakePieceTile
     [WALL, WALL, WALL].freeze
   ].freeze
 
-  def self.call(piece)
+  def self.call(piece, trace_color = nil)
     player_names = piece.players.map(&:name)
     tile = BASE_TILE.map(&:dup)
-    tile[1][1] = piece.card.image unless piece.card.nil?
+    tile[1][1] =
+      if piece.card.nil?
+        trace_color.nil? ? FREE : "\u25AA\u25AA".send(trace_color)
+      else
+        trace_color.nil? ? piece.card.image : piece.card.image.send(trace_color)
+      end
     tile[0][1] = FREE if piece.passages.include?(:north)
     tile[1][2] = FREE if piece.passages.include?(:east)
     tile[2][1] = FREE if piece.passages.include?(:south)
