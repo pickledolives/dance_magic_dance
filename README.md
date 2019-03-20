@@ -1,8 +1,8 @@
 # dance_magic_dance
 
-CLI game similar to the board game "Das verrückte Labyrinth" by Ravensburger which is popular especially in Germany.
+CLI game similar to the board game "Das verrückte Labyrinth" by Ravensburger, which is particularly popular in Germany.
 
-We will publish a blog series about our experience coding this game.
+We will publish a blog series about our experiences coding this game.
 
 ## Status: This is WIP, work in progress.
 
@@ -14,11 +14,12 @@ We will publish a blog series about our experience coding this game.
 - working unlimited moves and WIN game when card stack is empty => FULL GAME!
 - code refactored
 
-TODO:
+TO DO:
 - board surrounding graphics: directions, slots
 - display current piece-in-hand and card
 - test suite
 - save and load game state
+- display last players path on board
 
 ## Run
 
