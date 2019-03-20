@@ -3,6 +3,7 @@
 module RenderBoard
 
   SLOT_LABELS = { 1 => 't', 3 => 'c', 5 => 'b' }
+  ROWS_PER_TILE = 3
 
   def self.call(board)
     puts "     \u25B5 #{"n \u25B5 " * 12}"
@@ -11,8 +12,8 @@ module RenderBoard
     puts "\u25C3    #{'-' * 50}    \u25B9"
     board.each.with_index do |row_of_pieces, i|
       pushable = i % 2 == 1
-      row_of_tiles = row_of_pieces.map { |piece| RenderPieceTile.call(piece) }
-      (0..2).map do |i_of_tiles_row|
+      row_of_tiles = row_of_pieces.map { |piece| MakePieceTile.call(piece) }
+      ROWS_PER_TILE.times do |i_of_tiles_row|
         even_row = ((i * 4) + i_of_tiles_row) % 2 == 0
         slot_label = pushable && i_of_tiles_row == 1 ? SLOT_LABELS[i] : ' '
         prefix = "#{even_row ? 'w' : "\u25C3"}  #{slot_label}#{pushable ? "\u25B6" : ' '}|"
