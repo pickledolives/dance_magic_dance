@@ -1,4 +1,4 @@
-  # frozen_string_literal: true
+# frozen_string_literal: true
 
 class Player
   attr_reader :name, :image, :cards, :completed_cards

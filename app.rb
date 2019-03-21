@@ -70,7 +70,7 @@ while game.winner.nil?
   puts '--- board'
   RenderBoard.call(game.board, game.last_player, game.last_push)
   puts '---'
-  puts "Player '#{game.current_player_name}'s current card is #{game.current_player.current_card}"
+  puts "Player '#{game.colorized_current_player_name}'s current card is #{game.current_player.current_card}"
   puts "Piece in play: #{game.piece_in_play}"
   RenderPieceTileAndCard.call(game.piece_in_play, game.current_player.current_card)
   retry_input_until_valid do
@@ -80,7 +80,7 @@ while game.winner.nil?
     slot_abbrev, piece_passages_abbrev = push_input.split
     game.push_at!(parse_slot(slot_abbrev), piece_passages_abbrev.nil? ? nil : parse_piece_passages(piece_passages_abbrev))
   end
-  puts "Player '#{game.current_player_name}' pushed at '#{game.last_push}'"
+  puts "Player '#{game.colorized_current_player_name}' pushed at '#{game.last_push.join(', ')}'"
   puts '--- board'
   RenderBoard.call(game.board)
   puts '---'
@@ -91,7 +91,7 @@ while game.winner.nil?
     exit if QUITS.include?(move_input)
     game.move_player!(parse_path(move_input))
   end
-  puts "Player '#{game.current_player_name}' tried to move #{game.current_player.last_move.join(', ')}"
+  puts "Player '#{game.colorized_current_player_name}' tried to move #{game.current_player.last_move.join(', ')}"
   puts '==='
   puts
   game.next_player!

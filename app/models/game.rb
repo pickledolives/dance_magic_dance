@@ -131,6 +131,10 @@ class Game
     @players[@current_player_name]
   end
 
+  def colorized_current_player_name
+    @current_player_name.to_s.send(@current_player_name)
+  end
+
   def move_player!(path)
     current_player.last_move = path
     current_player.last_move_trace = [current_player.piece]
