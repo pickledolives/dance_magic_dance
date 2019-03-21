@@ -2,7 +2,7 @@
 
 class Player
   attr_reader :name, :image, :cards, :completed_cards
-  attr_accessor :piece, :last_move
+  attr_accessor :piece, :last_move, :last_move_trace
 
   def initialize(name, image)
     @name = name
@@ -15,6 +15,7 @@ class Player
     @piece.add_player(self)
     @completed_cards = []
     @last_move = []
+    @last_move_trace = []
   end
 
   def won?

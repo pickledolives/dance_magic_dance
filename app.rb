@@ -68,7 +68,7 @@ game = Game.new(players_input.to_i)
 while game.winner.nil?
   puts
   puts '--- board'
-  RenderBoard.call(game.board)
+  RenderBoard.call(game.board, game.last_player, game.last_push)
   puts '---'
   puts "Player '#{game.colorized_current_player_name}'s current card is #{game.current_player.current_card}"
   puts "Piece in play: #{game.piece_in_play}"
